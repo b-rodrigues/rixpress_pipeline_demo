@@ -23,7 +23,8 @@ jobs:
         run: |
           if git ls-remote --exit-code origin pipeline-output; then
             git fetch origin pipeline-output:pipeline-output
-            git checkout pipeline-output -- pipeline_outputs.nar
+            mkdir -p _rixpress
+            git show pipeline-output:pipeline_outputs.nar > _rixpress/pipeline_outputs.nar
           else
             echo "pipeline-output branch does not exist"
           fi
@@ -42,7 +43,7 @@ jobs:
       - name: Run import_nix_archive if file exists
         run: |
           if [ -f pipeline_outputs.nar ]; then
-            nix-shell --run "Rscript -e 'rixpress::import_nix_archive(archive_file = \"pipeline_outputs.nar\")'"
+            nix-shell --run "Rscript -e 'rixpress::import_nix_archive(archive_file = \"_rixpress/pipeline_outputs.nar\")'"
           else
             echo "NULL"
           fi
@@ -53,7 +54,7 @@ jobs:
 
       - name: Export outputs to avoid rebuild
         run: |
-          nix-shell --run "Rscript -e 'rixpress::export_nix_archive(archive_file = \"pipeline_outputs.nar\")'"
+          nix-shell --run "Rscript -e 'rixpress::export_nix_archive(archive_file = \"_rixpress/pipeline_outputs.nar\")'"
 
       - name: Set git config
         run: |
