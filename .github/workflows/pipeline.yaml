@@ -20,7 +20,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Silence useless nix warning
-        run: export NIX_PATH=$HOME/.nix-defexpr/channels
+        run: |
+          mkdir -p /home/runner/.nix-defexpr/ && touch /home/runner/.nix-defexpr/channels
+          export NIX_PATH=$HOME/.nix-defexpr/channels
 
       - name: Fetch pipeline_outputs.nar from pipeline-output branch if exists
         run: |
